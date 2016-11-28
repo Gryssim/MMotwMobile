@@ -5,7 +5,9 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +36,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class DailyTasksActivity extends AppCompatActivity {
 
     TextView selectedDate;
+    ImageButton dateLeftButton, dateRightButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,8 @@ public class DailyTasksActivity extends AppCompatActivity {
         setContentView(R.layout.activity_daily_tasks);
 
         selectedDate = (TextView) findViewById(R.id.selectedDate);
+        dateLeftButton = (ImageButton) findViewById(R.id.dateLeftButton);
+        dateRightButton = (ImageButton) findViewById(R.id.dateRightButton);
 
         selectedDate.setText(buildDateString());
 
@@ -51,14 +56,95 @@ public class DailyTasksActivity extends AppCompatActivity {
         userName = userName.substring(1, userName.length() - 1);
         System.out.println(userName);
 
+        final String innerFunctionUserName = userName;
+
         new populateTasks().execute(userName, selectedDate.getText().toString());
+
+        dateLeftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newDate = decrementDate(selectedDate.getText().toString());
+                selectedDate.setText(newDate);
+                new populateTasks().execute(innerFunctionUserName, newDate);
+            }
+        });
+
+        dateRightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newDate = incrementDate(selectedDate.getText().toString());
+                selectedDate.setText(newDate);
+                new populateTasks().execute(innerFunctionUserName, newDate);
+            }
+        });
 
     }
 
     public String buildDateString() {
 
-        String result = DateFormat.getDateInstance().format(new Date());
+        return DateFormat.getDateInstance().format(new Date());
+    }
 
+    public String decrementDate(String dateTime){
+        String result = "";
+        StringBuilder sb = new StringBuilder(result);
+
+        String newDates[] = dateTime.split(" ");
+
+        int day = Integer.parseInt(newDates[1].substring(0, newDates[1].length() - 1));
+        day--;
+
+        result = sb.append(newDates[0]).append(" ").append(String.valueOf(day)).append(", ").append(newDates[2]).toString();
+
+
+        return result;
+    }
+
+    public String incrementDate(String dateTime){
+        String result = "";
+        StringBuilder sb = new StringBuilder(result);
+
+        String newDates[] = dateTime.split(" ");
+
+        int day = Integer.parseInt(newDates[1].substring(0, newDates[1].length() - 1));
+        day++;
+
+        result = sb.append(newDates[0]).append(" ").append(String.valueOf(day)).append(", ").append(newDates[2]).toString();
+
+
+        return result;
+    }
+
+    public String convertMonthStringToNum(String monthString){
+
+        String result = "";
+
+        switch(monthString){
+            case "Jan":  result = "01";
+                break;
+            case "Feb":  result = "02";
+                break;
+            case "Mar":  result = "03";
+                break;
+            case "Apr":  result = "04";
+                break;
+            case "May":  result = "05";
+                break;
+            case "Jun":  result = "06";
+                break;
+            case "Jul":  result = "07";
+                break;
+            case "Aug":  result = "08";
+                break;
+            case "Sep":  result = "09";
+                break;
+            case "Oct":  result = "10";
+                break;
+            case "Nov":  result = "11";
+                break;
+            case "Dec":  result = "12";
+                break;
+        }
         return result;
     }
 
@@ -67,35 +153,7 @@ public class DailyTasksActivity extends AppCompatActivity {
         StringBuilder sb = new StringBuilder(result);
 
         String newDates[] = dateTime.split(" ");
-        String monthString ="";
-
-
-        switch(newDates[0]){
-            case "Jan":  monthString = "01";
-                         break;
-            case "Feb":  monthString = "02";
-                         break;
-            case "Mar":  monthString = "03";
-                         break;
-            case "Apr":  monthString = "04";
-                         break;
-            case "May":  monthString = "05";
-                         break;
-            case "Jun":  monthString = "06";
-                         break;
-            case "Jul":  monthString = "07";
-                         break;
-            case "Aug":  monthString = "08";
-                         break;
-            case "Sep":  monthString = "09";
-                         break;
-            case "Oct":  monthString = "10";
-                         break;
-            case "Nov":  monthString = "11";
-                         break;
-            case "Dec":  monthString = "12";
-                         break;
-        }
+        String monthString = convertMonthStringToNum(newDates[0]);
 
         result = sb.append(newDates[2].substring(2)).append("-").append(monthString).append("-").append(newDates[1].substring(0, 2)).toString();
 
@@ -163,6 +221,7 @@ public class DailyTasksActivity extends AppCompatActivity {
             JsonArray jArray = parser.parse(result).getAsJsonArray();
 
             LinearLayout ll = (LinearLayout)findViewById(R.id.linearLayout1);
+            ll.removeAllViewsInLayout();
 
             for(int i = 0; i < jArray.size(); i++){
                 CheckBox cb = new CheckBox(getApplicationContext());

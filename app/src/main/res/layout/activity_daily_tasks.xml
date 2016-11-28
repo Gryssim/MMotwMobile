@@ -16,7 +16,7 @@
         android:layout_height="20dp"
         android:background="@drawable/left_arrow"
         android:layout_marginTop="17dp"
-        android:id="@+id/imageButton"
+        android:id="@+id/dateLeftButton"
         android:layout_marginLeft="23dp"
         android:layout_marginStart="23dp"
         android:layout_alignParentTop="true"
@@ -29,8 +29,8 @@
         android:background="@drawable/right_arrow"
         android:layout_marginRight="29dp"
         android:layout_marginEnd="29dp"
-        android:id="@+id/imageButton2"
-        android:layout_alignTop="@+id/imageButton"
+        android:id="@+id/dateRightButton"
+        android:layout_alignTop="@+id/dateLeftButton"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -42,7 +42,7 @@
         android:textColor="#000000"
         android:id="@+id/selectedDate"
         android:text="testing"
-        android:layout_alignTop="@+id/imageButton2"
+        android:layout_alignTop="@+id/dateRightButton"
         android:layout_centerHorizontal="true" />
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,4 +54,5 @@
 
 
     </LinearLayout>
+
 </RelativeLayout>
